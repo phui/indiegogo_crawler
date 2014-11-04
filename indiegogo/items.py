@@ -8,10 +8,33 @@
 import scrapy
 
 
-class UserItem(scrapy.Item):
-    # define the fields for your item here like:
-    # name = scrapy.Field()
-    pass
+class UserProfileItem(scrapy.Item):
+    uid = scrapy.Field() # user id
+    url = scrapy.Field() # source url
+    name = scrapy.Field() # username
+    social_verify = scrapy.Field() # verification content of social info
+    location = scrapy.Field() # location string of the user
+    num_campaigns = scrapy.Field() # number of campaigns started
+    num_contrib = scrapy.Field() # number of contributions made
+    num_referrals = scrapy.Field() # number of referrals made
+    num_comments = scrapy.Field() # number of comments made
+
+
+class UserCampaignItem(scrapy.Item):
+    uid = scrapy.Field() # user id
+    # list of urls of campaigns started shown on the site
+    campaign_urls = scrapy.Field()
+    # list of urls of contribution shown on the site
+    contrib_urls = scrapy.Field()
+    # list of urls of following projects shown on the site
+    following_urls = scrapy.Field()
+
+
+class UserActivityItem(scrapy.Item):
+    uid = scrapy.Field() # user id
+    # list of activity info show on the site
+    activities = scrapy.Field()
+
 
 class ProjectItem(scrapy.Item):
     pass
