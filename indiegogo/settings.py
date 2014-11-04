@@ -13,5 +13,14 @@ BOT_NAME = 'GPCrawler'
 SPIDER_MODULES = ['indiegogo.spiders']
 NEWSPIDER_MODULE = 'indiegogo.spiders'
 
+# Setting for delay of requests
+DOWNLOAD_DELAY = 8.0
+CONCURRENT_REQUESTS_PER_IP = 3
+AUTOTHROTTLE_ENABLED = True
+AUTOTHROTTLE_START_DELAY = 5.0
+AUTOTHROTTLE_MAX_DELAY = 30.0
+AUTOTHROTTLE_DEBUG = True
+
+
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = 'indiegogo (+http://www.yourdomain.com)'
