@@ -23,11 +23,11 @@ class UserProfileItem(scrapy.Item):
 class UserCampaignItem(scrapy.Item):
     uid = scrapy.Field() # user id
     # list of urls of campaigns started shown on the site
-    campaign_urls = scrapy.Field()
+    campaign_ids = scrapy.Field()
     # list of urls of contribution shown on the site
-    contrib_urls = scrapy.Field()
+    contrib_ids = scrapy.Field()
     # list of urls of following projects shown on the site
-    following_urls = scrapy.Field()
+    following_ids = scrapy.Field()
 
 
 class UserActivityItem(scrapy.Item):
