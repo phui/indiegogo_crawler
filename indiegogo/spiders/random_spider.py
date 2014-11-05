@@ -65,20 +65,26 @@ class RandomSpider(scrapy.Spider):
         campaign = UserCampaignItem()
         campaign['uid'] = int(response.url.split('/')[-2])
 
-        campaign['campaign_ids'] = response.css(
-            'body > div.container.i-profile-container > div:nth-child(1) > ' +
-            'ul > li > div > div.i-campaign > a::attr(href)'
-        ).extract()
+        campaign['campaign_ids'] = [
+            int(e.split('/')[-1]) for e in response.css(
+                'body > div.container.i-profile-container > div:nth-child(1) > ' +
+                'ul > li > div > div.i-campaign > a::attr(href)'
+            ).extract()
+        ]
 
-        campaign['contrib_ids'] = response.css(
-            'body > div.container.i-profile-container > div:nth-child(2) > ' +
-            'ul > li > div > div.i-campaign > a::attr(href)'
-        ).extract()
+        campaign['contrib_ids'] = [
+            int(e.split('/')[-1]) for e in response.css(
+                'body > div.container.i-profile-container > div:nth-child(2) > ' +
+                'ul > li > div > div.i-campaign > a::attr(href)'
+            ).extract()
+        ]
 
-        campaign['following_ids'] = response.css(
-            'body > div.container.i-profile-container > div:nth-child(3) > ' +
-            'ul > li > div > div.i-campaign > a::attr(href)'
-        ).extract()
+        campaign['following_ids'] = [
+            int(e.split('/')[-1]) for e in response.css(
+                'body > div.container.i-profile-container > div:nth-child(3) > ' +
+                'ul > li > div > div.i-campaign > a::attr(href)'
+            ).extract()
+        ]
         return campaigns
 
     def parse_activity(self, response):
