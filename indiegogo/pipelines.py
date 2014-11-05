@@ -17,23 +17,23 @@ Con = mdb.connect(
     host=Config.get('db', 'host'),
     user=Config.get('db', 'uname'),
     passwd=Config.get('db', 'passw'),
-    db=Config.get('db', 'dname')
+    db=Config.get('db', 'dname'),
     port=int(Config.get('db', 'port'))
 )
 Cur = Con.cursor()
 
 
 profile_field_order = [
-    'uid', 'url', 'name', 'social_verify', 'location',
+    'uid', 'url', 'name', 'location',
     'num_campaigns', 'num_contrib', 'num_referrals', 'num_comments'
 ]
 def process_profile(profile_item):
+    data = tuple([profile_item[key] for key in profile_field_order])
     Cur.execute(
         'INSERT INTO igg_user_profile('+
-        'uid,url,name,social_verify,location,'+
+        'uid,url,name,location,'+
         'num_campaigns,num_contrib,num_referrals,num_comments'+
-        ") VALUES (%d,'%s','%s','%s','%s',%d,%d,%d,%d)"
-        % tuple([process_item[key] for key in profile_field_order])
+        ") VALUES (%d,'%s','%s','%s',%d,%d,%d,%d)" % data 
     )
 
 
@@ -61,13 +61,13 @@ def process_campaign(campaign_item):
         )
 
     for pid in campaign_item['contrib_ids']:
-        cur.execute(
+        Cur.execute(
             'insert into igg_user_contribution(uid,pid) VALUES (%d,%d)' %
             (uid, pid)
         )
 
     for pid in campaign_item['following_ids']:
-        cur.execute(
+        Cur.execute(
             'insert into igg_user_following(uid,pid) VALUES (%d,%d)' %
             (uid, pid)
         )
@@ -79,12 +79,18 @@ def process_activity(activity_item):
         if len(tup) == 4:
             Cur.execute(
                 'INSERT INTO igg_user_comment(uid,pid,tlabal,content)' +
-                "VALUES (%d,%d,'%s','%s')" % (uid,tup[1],tup[2],tup[3])
+                "VALUES (%d,%d,'%s','%s')" %
+                (uid,tup[1],
+                 tup[2].replace("'", ""),
+                 tup[3].replace("'", ""))
             )
         else:
             Cur.execute(
                 'INSERT INTO igg_user_activity_log(uid,pid,tlabal,act)' +
-                "VALUES (%d,%d,'%s','%s')" % (uid,tup[1],tup[2],tup[0])
+                "VALUES (%d,%d,'%s','%s')" % 
+                (uid,tup[1],
+                 tup[2].replace("'", ""),
+                 tup[0].replace("'", ""))
             )
 
 
@@ -100,10 +106,9 @@ class MySQLPipeline(object):
         self._count = 0
 
     def process_item(self, item, spider):
-        IndiegogoPipeline._process_branch[item.__cls__](item)
+        MySQLPipeline._process_branch[type(item)](item)
         self._count += 1
         if self._count == 1:
-            Cur.commit()
             Con.commit()
             self._count = 0
         return item
