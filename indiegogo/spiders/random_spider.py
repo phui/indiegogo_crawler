@@ -39,10 +39,8 @@ class RandomSpider(scrapy.Spider):
             'div.i-framed.i-verifications > div > ' +
             'span:nth-child(2)::text'
         ).extract()[0]
-        if len(social_verify.split()) > 2:
-            social_verify = -1
-        else:
-            social_verify = int(''.join(social_verify.split()[0].split(',')))
+        if 'not yet verified' in social_verify:
+            social_verify = 'not yet verified'
         profile['social_verify'] = social_verify
 
         profile['location'] = response.css(

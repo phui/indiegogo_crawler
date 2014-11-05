@@ -21,6 +21,8 @@ AUTOTHROTTLE_START_DELAY = 5.0
 AUTOTHROTTLE_MAX_DELAY = 30.0
 AUTOTHROTTLE_DEBUG = True
 
+# Disable retry middlewire
+RETRY_ENABLED = False
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = 'indiegogo (+http://www.yourdomain.com)'
