@@ -10,13 +10,14 @@ import MySQLdb as mdb
 
 
 Config = ConfigParser()
-Config.read('../scrapy.cfg')
+with open('scrapy.cfg', 'r') as f:
+    Config.readfp(f)
 
 Con = mdb.connect(
-    Config.get('DB', 'host'),
-    Config.get('DB', 'uname'),
-    Config.get('DB', 'passw'),
-    Config.get('DB', 'dname')
+    host=Config.get('db', 'host'),
+    user=Config.get('db', 'uname'),
+    passwd=Config.get('db', 'passw'),
+    db=Config.get('db', 'dname')
 )
 Cur = Con.cursor()
 
@@ -33,6 +34,21 @@ def process_profile(profile_item):
         ") VALUES (%d,'%s','%s','%s','%s',%d,%d,%d,%d)"
         % tuple([process_item[key] for key in profile_field_order])
     )
+
+
+def process_verify(verify_item):
+    uid = verify_item['uid']
+    if len(verify_item['verify']) == 0:
+        Cur.execute(
+            'INSERT INTO igg_user_verify(uid,verify) VALUES (' +
+            "%d,'not yet verified')" % uid
+        )
+    else:
+        for verify in verify_item['verify']:
+            Cur.execute(
+                'INSERT INTO igg_user_verify(uid,verify) VALUES (' +
+                "%d,'%s')" % (uid, verify)
+            )
 
 
 def process_campaign(campaign_item):
@@ -71,13 +87,22 @@ def process_activity(activity_item):
             )
 
 
-class IndiegogoPipeline(object):
+class MySQLPipeline(object):
     _process_branch = {
         UserProfileItem: process_profile,
+        UserSocialverifyItem: process_verify,
         UserCampaignItem: process_campaign,
         UserActivityItem: process_activity
     }
 
+    def __init__(self):
+        self._count = 0
+
     def process_item(self, item, spider):
-        IndiegogoPipeline._process_branch[item.__cls__]()
+        IndiegogoPipeline._process_branch[item.__cls__](item)
+        self._count += 1
+        if self._count == 1:
+            Cur.commit()
+            Con.commit()
+            self._count = 0
         return item

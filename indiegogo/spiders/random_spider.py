@@ -2,10 +2,12 @@ import random
 import scrapy
 from scrapy.http import Request
 from ConfigParser import ConfigParser
+from indiegogo.items import *
 
 
 Config = ConfigParser()
-Config.read('../../scrapy.cfg')
+with open('scrapy.cfg', 'r') as f:
+    Config.readfp(f)
 
 uid_high = Config.get('uid', 'high')
 uid_low = Config.get('uid', 'low')
@@ -25,7 +27,8 @@ class RandomSpider(scrapy.Spider):
 
     def parse(self, response):
         profile = UserProfileItem()
-        profile['uid'] = int(response.url.split('/')[-1])
+        uid = int(response.url.split('/')[-1])
+        profile['uid'] = uid
         profile['url'] = response.url
 
         profile['name'] = response.css(
@@ -33,20 +36,21 @@ class RandomSpider(scrapy.Spider):
             'div.col-sm-8.i-margin-bottom-20 > h1::text'
         ).extract()[0]
 
-        social_verify = response.css(
-            'body > div.container.i-profile-container > div > div ' +
-            '> div.col-sm-4 > div:nth-child(3) > ' +
-            'div.i-framed.i-verifications > div > ' +
-            'span:nth-child(2)::text'
-        ).extract()[0]
-        if 'not yet verified' in social_verify:
-            social_verify = 'not yet verified'
-        profile['social_verify'] = social_verify
+        verifications = response.css(
+            'body > div.container.i-profile-container > div > div > ' +
+            'div.col-sm-4 > div.i-lined-section > ' +
+            'div.i-framed.i-verifications > div > span::text'
+        ).extract()
+        social_verify = UserSocialverifyItem()
+        social_verify['uid'] = uid
+        social_verify['verify'] = verifications
+        yield social_verify
 
-        profile['location'] = response.css(
+        location = response.css(
             'body > div.container.i-profile-header > div.row > ' +
             'div.col-sm-8.i-margin-bottom-20 > div > span:nth-child(2)::text'
-        ).extract()[0]
+        ).extract()
+        profile['location'] = location[0] if len(location) > 0 else 'not shown'
 
         stats = response.css(
             'body > div.container.i-profile-container > div > div > ' +
@@ -57,10 +61,10 @@ class RandomSpider(scrapy.Spider):
                 profile['num_contrib'], profile['num_referrals'] = stats
 
         # yield the parsed result from the campaigns page
-        yield Request(self.url + '/campaigns', callback=self.parse_campaign)
+        yield Request(response.url + '/campaigns', callback=self.parse_campaign)
         # yield the parsed result from the activity page
-        yield Request(self.url + '/activities', callback=self.parse_activity)
-        return profile
+        yield Request(response.url + '/activities', callback=self.parse_activity)
+        yield profile
 
     def parse_campaign(self, response):
         campaign = UserCampaignItem()
@@ -86,7 +90,7 @@ class RandomSpider(scrapy.Spider):
                 'ul > li > div > div.i-campaign > a::attr(href)'
             ).extract()
         ]
-        return campaigns
+        return campaign
 
     def parse_activity(self, response):
         activity = UserActivityItem()
@@ -130,7 +134,7 @@ class RandomSpider(scrapy.Spider):
                 )
                 comment_counter += 1
             else:
-                acts.append((act_types[i], act_project_ids[i], act_time_labels[i])
+                acts.append((act_types[i], act_project_ids[i], act_time_labels[i]))
         activity['activities'] = acts
 
         return activity

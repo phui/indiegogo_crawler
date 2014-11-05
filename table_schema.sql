@@ -2,12 +2,17 @@ CREATE TABLE igg_user_profile(
     uid INT NOT NULL,
     url VARCHAR(70) NOT NULL,
     name VARCHAR(50) NOT NULL,
-    social_verify VARCHAR(70) NOT NULL,
     location VARCHAR(50) NOT NULL,
     num_campaigns INT NOT NULL,
     num_contrib INT NOT NULL,
     num_referrals INT NOT NULL,
     num_comments INT NOT NULL,
+    insert_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP()
+);
+
+CREATE TABLE igg_user_verify(
+    uid INT NOT NULL,
+    verify VARCHAR(70) NOT NULL,
     insert_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP()
 );
 

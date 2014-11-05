@@ -20,6 +20,11 @@ class UserProfileItem(scrapy.Item):
     num_comments = scrapy.Field() # number of comments made
 
 
+class UserSocialverifyItem(scrapy.Item):
+    uid = scrapy.Field()
+    verify = scrapy.Field()
+
+
 class UserCampaignItem(scrapy.Item):
     uid = scrapy.Field() # user id
     # list of urls of campaigns started shown on the site

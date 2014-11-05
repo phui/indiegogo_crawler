@@ -45,3 +45,6 @@ Temporary Items
 # Vim history files
 *~
 .*~
+
+# python compiled files
+*.pyc

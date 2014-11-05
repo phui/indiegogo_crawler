@@ -24,5 +24,10 @@ AUTOTHROTTLE_DEBUG = True
 # Disable retry middlewire
 RETRY_ENABLED = False
 
+# Enable pipeline
+ITEM_PIPELINES = {
+    'indiegogo.pipelines.MySQLPipeline': 300
+}
+
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = 'indiegogo (+http://www.yourdomain.com)'
