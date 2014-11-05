@@ -31,7 +31,7 @@ def process_profile(profile_item):
         'uid,url,name,social_verify,location,'+
         'num_campaigns,num_contrib,num_referrals,num_comments'+
         ") VALUES (%d,'%s','%s','%s','%s',%d,%d,%d,%d)"
-        % [process_item[key] for key in profile_field_order]
+        % tuple([process_item[key] for key in profile_field_order])
     )
 
 

@@ -14,11 +14,14 @@ url_format = Config.get('url', 'format')
 class RandomSpider(scrapy.Spider):
     name = 'random'
     allowed_domains = ['indiegogo.com']
-    start_urls = []
+    start_urls = [
+        'https://indiegogo.com/individuals/91221',
+        'https://www.indiegogo.com/individuals/9023673'
+    ]
 
-    def start_requests(self):
-        while True:
-            yield Request(url_format % random.randint(uid_low, uid_high), self.parse)
+    #def start_requests(self):
+    #    while True:
+    #        yield Request(url_format % random.randint(uid_low, uid_high), self.parse)
 
     def parse(self, response):
         profile = UserProfileItem()
