@@ -18,6 +18,7 @@ Con = mdb.connect(
     user=Config.get('db', 'uname'),
     passwd=Config.get('db', 'passw'),
     db=Config.get('db', 'dname')
+    port=int(Config.get('db', 'port'))
 )
 Cur = Con.cursor()
 
