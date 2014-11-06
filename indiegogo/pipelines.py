@@ -41,14 +41,14 @@ def process_verify(verify_item):
     uid = verify_item['uid']
     if len(verify_item['verify']) == 0:
         Cur.execute(
-            'INSERT INTO igg_user_verify(uid,verify) VALUES (' +
-            "%d,'not yet verified')" % uid
+            u'INSERT INTO igg_user_verify(uid,verify) VALUES (' +
+            u"%d,'not yet verified')" % uid
         )
     else:
         for verify in verify_item['verify']:
             Cur.execute(
-                'INSERT INTO igg_user_verify(uid,verify) VALUES (' +
-                "%d,'%s')" % (uid, verify)
+                u'INSERT INTO igg_user_verify(uid,verify) VALUES (' +
+                u"%d,'%s')" % (uid, verify)
             )
 
 
@@ -56,19 +56,19 @@ def process_campaign(campaign_item):
     uid = campaign_item['uid']
     for pid in campaign_item['campaign_ids']:
         Cur.execute(
-            'INSERT INTO igg_user_campaign(uid,pid) VALUES (%d,%d)' %
+            u'INSERT INTO igg_user_campaign(uid,pid) VALUES (%d,%d)' %
             (uid, pid)
         )
 
     for pid in campaign_item['contrib_ids']:
         Cur.execute(
-            'insert into igg_user_contribution(uid,pid) VALUES (%d,%d)' %
+            u'insert into igg_user_contribution(uid,pid) VALUES (%d,%d)' %
             (uid, pid)
         )
 
     for pid in campaign_item['following_ids']:
         Cur.execute(
-            'insert into igg_user_following(uid,pid) VALUES (%d,%d)' %
+            u'insert into igg_user_following(uid,pid) VALUES (%d,%d)' %
             (uid, pid)
         )
 
@@ -78,16 +78,16 @@ def process_activity(activity_item):
     for tup in activity_item['activities']:
         if len(tup) == 4:
             Cur.execute(
-                'INSERT INTO igg_user_comment(uid,pid,tlabal,content)' +
-                "VALUES (%d,%d,'%s','%s')" %
+                u'INSERT INTO igg_user_comment(uid,pid,tlabal,content)' +
+                u"VALUES (%d,%d,'%s','%s')" %
                 (uid,tup[1],
                  tup[2].replace("'", ""),
                  tup[3].replace("'", ""))
             )
         else:
             Cur.execute(
-                'INSERT INTO igg_user_activity_log(uid,pid,tlabal,act)' +
-                "VALUES (%d,%d,'%s','%s')" % 
+                u'INSERT INTO igg_user_activity_log(uid,pid,tlabal,act)' +
+                u"VALUES (%d,%d,'%s','%s')" % 
                 (uid,tup[1],
                  tup[2].replace("'", ""),
                  tup[0].replace("'", ""))

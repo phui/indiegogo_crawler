@@ -1,4 +1,5 @@
 import random
+import time
 import scrapy
 from scrapy.http import Request
 from ConfigParser import ConfigParser
@@ -9,9 +10,10 @@ Config = ConfigParser()
 with open('scrapy.cfg', 'r') as f:
     Config.readfp(f)
 
-uid_high = Config.get('uid', 'high')
-uid_low = Config.get('uid', 'low')
+uid_high = int(Config.get('uid', 'high'))
+uid_low = int(Config.get('uid', 'low'))
 url_format = Config.get('url', 'format')
+
 
 class RandomSpider(scrapy.Spider):
     name = 'random'
