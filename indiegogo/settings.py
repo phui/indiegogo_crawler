@@ -17,9 +17,10 @@ NEWSPIDER_MODULE = 'indiegogo.spiders'
 DOWNLOAD_DELAY = 8.0
 CONCURRENT_REQUESTS_PER_IP = 3
 AUTOTHROTTLE_ENABLED = True
-AUTOTHROTTLE_START_DELAY = 5.0
+AUTOTHROTTLE_START_DELAY = 6.0
 AUTOTHROTTLE_MAX_DELAY = 30.0
 AUTOTHROTTLE_DEBUG = True
+RANDOMIZE_DOWNLOAD_DELAY = True
 
 # Disable retry middlewire
 RETRY_ENABLED = False
@@ -29,5 +30,6 @@ ITEM_PIPELINES = {
     'indiegogo.pipelines.MySQLPipeline': 300
 }
 
-# Crawl responsibly by identifying yourself (and your website) on the user-agent
-#USER_AGENT = 'indiegogo (+http://www.yourdomain.com)'
+# Hide self user_agent string
+USER_AGENT = 'Mozilla/5.0 (Windows NT 6.3; Win64; x64) ' + \
+        'AppleWebKit/537.36 (KHTML, like Gecko) Chrome/37.0.2049.0 Safari/537.36'

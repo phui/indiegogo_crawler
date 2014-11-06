@@ -16,14 +16,21 @@ url_format = Config.get('url', 'format')
 class RandomSpider(scrapy.Spider):
     name = 'random'
     allowed_domains = ['indiegogo.com']
-    start_urls = [
-        'https://indiegogo.com/individuals/91221',
-        'https://www.indiegogo.com/individuals/9023673'
-    ]
+    #start_urls = [
+    #    'https://indiegogo.com/individuals/91221',
+    #    'https://www.indiegogo.com/individuals/9023673'
+    #]
 
-    #def start_requests(self):
-    #    while True:
-    #        yield Request(url_format % random.randint(uid_low, uid_high), self.parse)
+    def __init__(self, *args, **kwargs):
+        super(RandomSpider, self).__init__(*args, **kwargs)
+        self.explored_uid = set()
+
+    def start_requests(self):
+        while True:
+            uid = random.randint(uid_low, uid_high)
+            if uid in self.explored_uid:
+                continue
+            yield Request(url_format % uid, self.parse)
 
     def parse(self, response):
         profile = UserProfileItem()
@@ -64,6 +71,8 @@ class RandomSpider(scrapy.Spider):
         yield Request(response.url + '/campaigns', callback=self.parse_campaign)
         # yield the parsed result from the activity page
         yield Request(response.url + '/activities', callback=self.parse_activity)
+        # record this uid to avoid repeated parsing
+        self.explored_uid.add(uid)
         yield profile
 
     def parse_campaign(self, response):
